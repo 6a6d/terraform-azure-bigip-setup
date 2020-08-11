@@ -60,7 +60,7 @@ resource "azurerm_network_interface" "app_nic" {
     name                      = format("%s-app-nic-%s-%s",var.prefix,count.index,random_id.randomId.hex)
     location                  = azurerm_resource_group.main.location
     resource_group_name       = azurerm_resource_group.main.name
-    network_security_group_id = azurerm_network_security_group.app_sg.id
+    #network_security_group_id = azurerm_network_security_group.app_sg.id
 
     ip_configuration {
         name                          = format("%s-app-nic-%s",var.prefix,random_id.randomId.hex)
@@ -78,7 +78,7 @@ resource "azurerm_network_security_group" "app_sg" {
     name                = format("%s-app_sg-%s",var.prefix,random_id.randomId.hex)
     location            = var.region
     resource_group_name = azurerm_resource_group.main.name
-    
+
     # extend the set of security rules to address the needs of
     # the applications deployed on the application server
     security_rule {

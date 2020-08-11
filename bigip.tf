@@ -1,4 +1,4 @@
-# Create F5 BIGIP VMs 
+# Create F5 BIGIP VMs
 resource "azurerm_virtual_machine" "f5bigip" {
     count                        = length(var.azs)
     name                         = format("%s-bigip-%s-%s",var.prefix,count.index,random_id.randomId.hex)
@@ -8,6 +8,7 @@ resource "azurerm_virtual_machine" "f5bigip" {
     network_interface_ids        = [azurerm_network_interface.mgmt-nic[count.index].id, azurerm_network_interface.ext-nic[count.index].id,azurerm_network_interface.int-nic[count.index].id]
     vm_size                      = var.instance_type
     zones                        = [element(var.azs,count.index)]
+    #virtual_machine_id = azurerm_virtual_machine.f5bigip.id
 
     # Uncomment this line to delete the OS disk automatically when deleting the VM
     delete_os_disk_on_termination = true
@@ -58,9 +59,10 @@ resource "azurerm_virtual_machine" "f5bigip" {
 resource "azurerm_virtual_machine_extension" "run_startup_cmd" {
     count                = length(var.azs)
     name                 = format("%s-bigip-startup-%s-%s",var.prefix,count.index,random_id.randomId.hex)
-    location             = azurerm_resource_group.main.location
-    resource_group_name  = azurerm_resource_group.main.name
-    virtual_machine_name = azurerm_virtual_machine.f5bigip[count.index].name
+    #location             = azurerm_resource_group.main.location
+    #resource_group_name  = azurerm_resource_group.main.name
+    #virtual_machine_name = azurerm_virtual_machine.f5bigip[count.index].name
+    virtual_machine_id   = azurerm_virtual_machine.f5bigip[count.index].id
     publisher            = "Microsoft.OSTCExtensions"
     type                 = "CustomScriptForLinux"
     type_handler_version = "1.2"
@@ -83,7 +85,7 @@ resource "azurerm_network_security_group" "management_sg" {
     name                = format("%s-mgmt_sg-%s",var.prefix,random_id.randomId.hex)
     location            = azurerm_resource_group.main.location
     resource_group_name = azurerm_resource_group.main.name
-    
+
     security_rule {
         name                       = "SSH"
         priority                   = 1001
@@ -114,13 +116,13 @@ resource "azurerm_network_security_group" "management_sg" {
     }
 }
 
-# Create interfaces for the BIGIPs 
+# Create interfaces for the BIGIPs
 resource "azurerm_network_interface" "mgmt-nic" {
     count                     = length(var.azs)
     name                      = format("%s-mgmtnic-%s-%s",var.prefix,count.index,random_id.randomId.hex)
     location                  = azurerm_resource_group.main.location
     resource_group_name       = azurerm_resource_group.main.name
-    network_security_group_id = azurerm_network_security_group.management_sg.id
+    #network_security_group_id = azurerm_network_security_group.management_sg.id
 
     ip_configuration {
         name                          = "primary"
@@ -175,7 +177,7 @@ resource "azurerm_network_interface" "ext-nic" {
     name                      = format("%s-extnic-%s-%s",var.prefix,count.index,random_id.randomId.hex)
     location                  = azurerm_resource_group.main.location
     resource_group_name       = azurerm_resource_group.main.name
-    network_security_group_id = azurerm_network_security_group.application_sg.id
+    #network_security_group_id = azurerm_network_security_group.application_sg.id
     enable_ip_forwarding      = true
 
     ip_configuration {
@@ -211,7 +213,7 @@ resource "azurerm_network_interface" "int-nic" {
     name                      = format("%s-intnic-%s-%s",var.prefix,count.index,random_id.randomId.hex)
     location                  = azurerm_resource_group.main.location
     resource_group_name       = azurerm_resource_group.main.name
-    network_security_group_id = azurerm_network_security_group.management_sg.id
+    #network_security_group_id = azurerm_network_security_group.management_sg.id
     enable_ip_forwarding      = true
 
     ip_configuration {
@@ -279,7 +281,7 @@ data "template_file" "vm_onboard" {
 
     vars = {
         uname       = var.admin_username
-        # replace this with a reference to the secret id 
+        # replace this with a reference to the secret id
         upassword   = random_password.password.result
         DO_URL      = var.DO_URL
         AS3_URL     = var.AS3_URL

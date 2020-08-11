@@ -1,7 +1,7 @@
 # must select a region that supports availability zones
 # https://docs.microsoft.com/en-us/azure/availability-zones/az-overview
 variable "region" {
-    default = "westus2"
+    default = "CentralUS"
 }
 
 variable "azs" {
@@ -17,7 +17,7 @@ variable "environment" {
 }
 
 variable "prefix" {
-    default = "mjmtfdemo"
+    default = "jmurray"
 }
 
 variable "application_count" {
@@ -30,18 +30,22 @@ variable "publickeyfile" {
 variable "privatekeyfile" {
     description = "private key for server access"
 }
+
 # BIGIP Image
 # https://github.com/F5Networks/f5-azure-arm-templates/blob/v7.0.0.2/supported/standalone/1nic/new-stack/payg/azuredeploy.json
-variable instance_type	{ default = "Standard_DS3_v2" }
-variable image_name	{ default = ["f5-bigip-virtual-edition-25m-best-hourly","f5-big-all-1slot-byol"] } # 0: PAYGO 1: BYOL
-variable product	{ default = ["f5-big-ip-best","f5-big-ip-byol"] } #  0: PAYGO 1: BYOL
-variable bigip_version	{ default = ["14.1.003000", "14.1.200000"] } #  0: PAYGO 1: BYOL
-variable bigip_license { default = "" }
+variable instance_type      { default = "Standard_DS3_v2" }
+#variable image_name        { default = ["f5-bigip-virtual-edition-25m-best-hourly","f5-big-all-1slot-byol"] } # 0: PAYGO 1: BYOL
+variable image_name         { default = ["f5-bigip-virtual-edition-25m-best-hourly"] } # 0: PAYGO 1: BYOL
+variable product            { default = ["f5-big-ip-best","f5-big-ip-byol"] } #  0: PAYGO 1: BYOL
+#variable bigip_version     { default = ["14.1.003000", "14.1.200000"] } #  0: PAYGO 1: BYOL
+variable bigip_version      { default = ["latest", "latest"] } #  0: PAYGO 1: BYOL
+variable bigip_license      { default = "" }
 
 variable "admin_username" {
     description = "BIG-IP administrative user"
     default     = "admin"
 }
+
 ## Please check and update the latest DO URL from https://github.com/F5Networks/f5-declarative-onboarding/releases
 # always point to a specific version in order to avoid inadvertent configuration inconsistency
 variable DO_URL {
@@ -49,6 +53,7 @@ variable DO_URL {
     type        = string
     default     = "https://github.com/F5Networks/f5-declarative-onboarding/releases/download/v1.9.0/f5-declarative-onboarding-1.9.0-1.noarch.rpm"
 }
+
 ## Please check and update the latest AS3 URL from https://github.com/F5Networks/f5-appsvcs-extension/releases/latest 
 # always point to a specific version in order to avoid inadvertent configuration inconsistency
 variable AS3_URL {
@@ -56,6 +61,7 @@ variable AS3_URL {
     type        = string
     default     = "https://github.com/F5Networks/f5-appsvcs-extension/releases/download/v3.16.0/f5-appsvcs-3.16.0-6.noarch.rpm"
 }
+
 ## Please check and update the latest TS URL from https://github.com/F5Networks/f5-telemetry-streaming/releases/latest 
 # always point to a specific version in order to avoid inadvertent configuration inconsistency
 variable TS_URL {

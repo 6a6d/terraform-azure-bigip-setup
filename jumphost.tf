@@ -11,7 +11,7 @@ resource "azurerm_virtual_machine" "jumphost" {
     # Uncomment this line to delete the OS disk automatically when deleting the VM
     # if this is set to false there are behaviors that will require manual intervention
     # if tainting the virtual machine
-    delete_os_disk_on_termination = true 
+    delete_os_disk_on_termination = true
 
     # Uncomment this line to delete the data disks automatically when deleting the VM
     delete_data_disks_on_termination = true
@@ -58,7 +58,7 @@ resource "azurerm_network_interface" "jh_nic" {
     name                      = format("%s-jh-nic-%s-%s",var.prefix,count.index,random_id.randomId.hex)
     location                  = azurerm_resource_group.main.location
     resource_group_name       = azurerm_resource_group.main.name
-    network_security_group_id = azurerm_network_security_group.jh_sg.id
+    #network_security_group_id = azurerm_network_security_group.jh_sg.id
 
     ip_configuration {
         name                          = format("%s-jh-nic-%s-%s",var.prefix,count.index,random_id.randomId.hex)
@@ -77,7 +77,7 @@ resource "azurerm_network_security_group" "jh_sg" {
     name                = format("%s-jh_sg-%s",var.prefix,random_id.randomId.hex)
     location            = azurerm_resource_group.main.location
     resource_group_name = azurerm_resource_group.main.name
-    
+
     security_rule {
         name                       = "SSH"
         priority                   = 1001
